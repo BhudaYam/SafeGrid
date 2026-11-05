@@ -36,8 +36,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import java.io.File
@@ -71,21 +72,36 @@ private fun typeColor(type: String): Color = when (type) {
     else -> Color(0xFF7B1FA2)
 }
 
+private val cartoTiles = object : OnlineTileSourceBase(
+    "CartoVoyager", 0, 19, 256, ".png",
+    arrayOf(
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager/",
+        "https://b.basemaps.cartocdn.com/rastertiles/voyager/",
+        "https://c.basemaps.cartocdn.com/rastertiles/voyager/"
+    )
+) {
+    override fun getTileURLString(pMapTileIndex: Long): String =
+        baseUrl +
+                MapTileIndex.getZoom(pMapTileIndex) + "/" +
+                MapTileIndex.getX(pMapTileIndex) + "/" +
+                MapTileIndex.getY(pMapTileIndex) + mImageFilenameEnding
+}
+
 @Composable
 fun DurbanMapScreen(onReport: () -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val mapView = remember {
-        val base = File(context.cacheDir, "osmdroid").also { it.mkdirs() }
+        val base = File(context.cacheDir, "osmdroid_safegrid").also { it.mkdirs() }
         val tiles = File(base, "tiles").also { it.mkdirs() }
         Configuration.getInstance().apply {
-            userAgentValue = context.packageName
+            userAgentValue = "SafeGridStudentPoE/1.0 (+https://github.com/BhudaYam/SafeGrid)"
             osmdroidBasePath = base
             osmdroidTileCache = tiles
         }
         MapView(context).apply {
-            setTileSource(TileSourceFactory.MAPNIK)
+            setTileSource(cartoTiles)
             setMultiTouchControls(true)
             controller.setZoom(11.0)
             controller.setCenter(GeoPoint(-29.8300, 30.9800))
@@ -148,6 +164,13 @@ fun DurbanMapScreen(onReport: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+        )
+
+        Text(
+            "Map data © OpenStreetMap contributors, © CARTO",
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp),
+            fontSize = 10.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Text(

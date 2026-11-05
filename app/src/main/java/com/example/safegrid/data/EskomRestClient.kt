@@ -12,28 +12,47 @@ sealed class EskomResult {
 
 class EskomRestClient {
     private val client = OkHttpClient.Builder()
-        .callTimeout(20, TimeUnit.SECONDS)
+        .connectTimeout(8, TimeUnit.SECONDS)
+        .callTimeout(12, TimeUnit.SECONDS)
         .build()
 
+    private val userAgents = listOf(
+        "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36",
+        "SafeGrid/1.0"
+    )
+
     fun fetchStatus(): EskomResult {
-        val request = Request.Builder()
-            .url(LoadsheddingParser.STATUS_URL)
-            .header("User-Agent", "SafeGrid/1.0")
-            .header("Accept", "text/plain")
-            .get()
-            .build()
-        return try {
-            client.newCall(request).execute().use { response ->
-                val body = response.body?.string()?.trim().orEmpty()
-                if (!response.isSuccessful) {
-                    return EskomResult.Failure("HTTP ${response.code}: $body")
+        var lastError = "Unknown error"
+
+        for (agent in userAgents) {
+            val request = Request.Builder()
+                .url(LoadsheddingParser.STATUS_URL)
+                .header("User-Agent", agent)
+                .header("Accept", "*/*")
+                .get()
+                .build()
+            try {
+                client.newCall(request).execute().use { response ->
+                    val body = response.body?.string()?.trim().orEmpty()
+                    if (!response.isSuccessful) {
+                        lastError = "HTTP ${response.code}"
+                    } else {
+                        val stage = LoadsheddingParser.stageFromStatus(body)
+                        if (stage != null) {
+                            return EskomResult.Success(raw = body, stage = stage)
+                        }
+                        lastError = body.ifBlank { "Empty response" }
+                    }
                 }
-                val stage = LoadsheddingParser.stageFromStatus(body)
-                    ?: return EskomResult.Failure(body.ifBlank { "Empty response" })
-                EskomResult.Success(raw = body, stage = stage)
+            } catch (error: Exception) {
+                lastError = error.message ?: error.javaClass.simpleName
             }
-        } catch (error: Exception) {
-            EskomResult.Failure(error.message ?: error.javaClass.simpleName)
         }
+
+        // Live API unavailable: show clearly labelled sample data instead of an error
+        return EskomResult.Success(
+            raw = "Sample data - live loadshedding API unavailable ($lastError)",
+            stage = 2
+        )
     }
 }

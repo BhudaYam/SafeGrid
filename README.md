@@ -34,13 +34,16 @@ Kotlin, Jetpack Compose, Room, WorkManager, DataStore, Firebase (Auth, Firestore
 ## GitHub and GitHub Actions
 The repository holds the full project history, committed regularly during development. A GitHub Actions workflow (`.github/workflows/build.yml`) runs on every push. It checks out the code, sets up JDK 17, runs the unit tests, builds the debug APK and uploads it as a downloadable artifact. This confirms the app builds on a clean machine, not only on my computer.
 
-[INSERT SCREENSHOT OF THE GREEN ACTIONS RUN]
+
 
 ## Screenshots
-[INSERT 4-5 SCREENSHOTS: login, home, map, settings, dark mode]
+![Home.jpeg](Screenshots/Home.jpeg)
+![Splash.jpeg](Screenshots/Splash.jpeg)
+![Power.jpeg](Screenshots/Power.jpeg)
+![Settings.jpeg](Screenshots/Settings.jpeg)
 
 ## Demo video
-[INSERT VIDEO LINK]
+https://youtu.be/5_r_Sdr06Uo
 
 ## Note on data
 The incident pins on the map are seeded sample data for Durban, used for demonstration.
@@ -50,7 +53,6 @@ The incident pins on the map are seeded sample data for Durban, used for demonst
 ### v1.0-poe (final PoE)
 Updates since the prototype:
 - Added a real OpenStreetMap map of Durban with incident pins and a tappable incident list (innovative feature)
-- Added dark mode
 - Added Google single sign-on
 - Added offline mode with background sync
 - Added real-time push notifications
