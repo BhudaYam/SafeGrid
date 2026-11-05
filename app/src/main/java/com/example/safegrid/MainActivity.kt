@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,17 +18,18 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.safegrid.ui.DurbanMapScreen
 import com.example.safegrid.ui.HomeScreen
 import com.example.safegrid.ui.LoginScreen
-import com.example.safegrid.ui.MapScreen
 import com.example.safegrid.ui.PowerScreen
 import com.example.safegrid.ui.RegisterScreen
 import com.example.safegrid.ui.ReportScreen
@@ -60,7 +62,9 @@ fun SafeGridApp(viewModel: SafeGridViewModel) {
     val notifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
     val location = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { }
 
-    MaterialTheme {
+    val dark = isSystemInDarkTheme()
+
+    MaterialTheme(colorScheme = if (dark) darkColorScheme() else lightColorScheme()) {
         when (state.screen) {
             Screen.SPLASH -> SplashScreen(onGetStarted = { viewModel.continueFromSplash() })
             Screen.LOGIN -> LoginScreen(
@@ -78,7 +82,7 @@ fun SafeGridApp(viewModel: SafeGridViewModel) {
             else -> {
                 Scaffold(
                     bottomBar = {
-                        NavigationBar(containerColor = Color.White) {
+                        NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                             NavItem(state.screen == Screen.HOME, "⌂", Strings.get(state.lang, S.Home)) {
                                 viewModel.open(Screen.HOME)
                             }
@@ -100,15 +104,17 @@ fun SafeGridApp(viewModel: SafeGridViewModel) {
                     Box(modifier = Modifier.fillMaxSize().padding(padding)) {
                         when (state.screen) {
                             Screen.POWER -> PowerScreen(state, viewModel)
-                            Screen.MAP -> MapScreen(state, viewModel) {
-                                location.launch(
-                                    arrayOf(
-                                        Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION
+                            Screen.MAP -> DurbanMapScreen(
+                                onReport = {
+                                    location.launch(
+                                        arrayOf(
+                                            Manifest.permission.ACCESS_FINE_LOCATION,
+                                            Manifest.permission.ACCESS_COARSE_LOCATION
+                                        )
                                     )
-                                )
-                                viewModel.open(Screen.REPORT)
-                            }
+                                    viewModel.open(Screen.REPORT)
+                                }
+                            )
                             Screen.REPORT -> ReportScreen(
                                 state = state,
                                 onBack = { viewModel.open(Screen.MAP) },

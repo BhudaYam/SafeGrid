@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.safegrid" />
+                  <option name="mobileSdkAppId" value="1:451490858222:android:cbd241a4a4e50243d85fff" />
+                  <option name="projectId" value="safegrid-4b312" />
+                  <option name="projectNumber" value="451490858222" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

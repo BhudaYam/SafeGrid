@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "451490858222",
+    "project_id": "safegrid-4b312",
+    "storage_bucket": "safegrid-4b312.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451490858222:android:cbd241a4a4e50243d85fff",
+        "android_client_info": {
+          "package_name": "com.example.safegrid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "451490858222-20hs6qfg6h52gfclbuu8ltvpfknpmgm7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.safegrid",
+            "certificate_hash": "d769b92086b7d69fe3ddfaf6c8609741a5630487"
+          }
+        },
+        {
+          "client_id": "451490858222-jsn9aqirsq29h02ao51b9v18ipv8vlik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgg2Z4cZWH9FvpVAdjwVeGDieBWAYkAAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "451490858222-jsn9aqirsq29h02ao51b9v18ipv8vlik.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
